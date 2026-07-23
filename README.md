@@ -1,17 +1,8 @@
-# Student ERP Deployment on Docker
+# Student ERP on Docker
 
-## Prerequisites
+## Step 1: Update Packages and Install Docker
 
-- Ubuntu EC2 Instance
-- Docker installed
-- Aurora RDS (MariaDB)
-- Git installed
-- MySQL Client
-- Student ERP source code (GitHub Repository)
-
----
-
-# Step 1: Update Packages and Install Docker
+Update the instance packages and install Docker.
 
 ```bash
 sudo apt update -y
@@ -20,7 +11,9 @@ sudo apt install docker.io -y
 
 ---
 
-# Step 2: Install MySQL Client
+## Step 2: Install MySQL Client
+
+Install the MySQL client.
 
 ```bash
 sudo apt install mysql-client -y
@@ -28,209 +21,21 @@ sudo apt install mysql-client -y
 
 ---
 
-# Step 3: Create Aurora RDS Database
+## Step 3: Create Aurora MariaDB Database
 
 1. Go to **AWS Console**.
-2. Open **RDS**.
-3. Click **Create Database**.
-4. Select **MariaDB**.
-5. Complete the required configuration.
-6. Set the database password.
-7. Attach the required Network/Security Group.
-8. Create the database.
+2. Open **Aurora RDS**.
+3. Select **MariaDB**.
+4. Complete the required configuration.
+5. Set the database password.
+6. Assign the required Network/Security Group.
+7. Wait until the database is available.
 
 ---
 
-# Step 4: Clone the Project Repository
+## Step 4: Clone the Repository
 
-```bash
-git clone <repository-url>
-```
-
----
-
-# Step 5: Login to MariaDB
-
-```bash
-mysql -h <RDS-endpoint> -u <username> -p
-```
-
-Enter the password when prompted.
-
----
-
-# Step 6: Create Database
-
-```sql
-CREATE DATABASE student_db;
-```
-
----
-
-# Step 7: Create User and Grant Privileges
-
-```sql
-GRANT ALL PRIVILEGES ON student_db.* TO 'username'@'%' IDENTIFIED BY 'your_password';
-
-FLUSH PRIVILEGES;
-```
-
-> **Note:** Replace `username` and `your_password` with your own database credentials.
-
----
-
-# Step 8: Use Database
-
-```sql
-USE student_db;
-```
-
----
-
-# Step 9: Exit Database
-
-```sql
-exit
-```
-
----
-
-# Backend Setup
-
-## Step 1: Navigate to Backend Directory
-
-```bash
-cd EasyCRUD/backend
-```
-
----
-
-## Step 2: Configure Database Connection
-
-Open the application properties file.
-
-```bash
-nano src/main/resources/application.properties
-```
-
-Update the following database details:
-
-- Aurora RDS Endpoint
-- Database Name
-- Database Username
-- Database Password
-
-Save the file.
-
----
-
-## Step 3: Create Dockerfile
-
-```bash
-nano Dockerfile
-```
-
-Add the required Dockerfile configuration.
-
----
-
-## Step 4: Build Docker Image
-
-```bash
-docker build -t <image-name> .
-```
-
----
-
-## Step 5: Run Backend Container
-
-```bash
-docker run -d -p <host-port>:<container-port> --name <container-name> <image-name>
-```
-
-The backend service is now running.
-
----
-
-# Frontend Setup
-
-## Step 1: Navigate to Frontend Directory
-
-```bash
-cd ../frontend
-```
-
----
-
-## Step 2: Configure Backend URL
-
-Open the environment file.
-
-```bash
-nano .env
-```
-
-Set the backend URL using your EC2 Public IP and backend port.
-
-Example:
-
-```text
-VITE_API_URL=http://<EC2-Public-IP>:<backend-port>
-```
-
-Save the file.
-
----
-
-## Step 3: Create Dockerfile
-
-```bash
-nano Dockerfile
-```
-
-Add the required Dockerfile configuration.
-
----
-
-## Step 4: Build Docker Image
-
-```bash
-docker build -t <image-name> .
-```
-
----
-
-## Step 5: Run Frontend Container
-
-```bash
-docker run -d -p <host-port>:<container-port> --name <container-name> <image-name>
-```
-
-The frontend service is now running.
-
----
-
-# Verify Deployment
-
-Copy the **Public IP Address** of your EC2 instance.
-
-Open a web browser and visit:
-
-```text
-http://<EC2-Public-IP>:<frontend-port>
-```
-
-If the deployment is successful, the **Student Registration Form** will be displayed.2. Open **RDS**.
-3. Click **Create Database**.
-4. Select **MariaDB**.
-5. Complete the required configuration.
-6. Set the database password.
-7. Attach the required Network/Security Group.
-8. Create the database.
-
----
-
-# Step 4: Clone the Project Repository
+Clone the project repository on the EC2 instance.
 
 ```bash
 git clone <repo-link>
@@ -238,17 +43,19 @@ git clone <repo-link>
 
 ---
 
-# Step 5: Login to MariaDB
+# Database Setup
+
+## Login to Database
 
 ```bash
-mysql -h <RDS-endpoint> -u <username> -p
+mysql -h <endpoint> -u <username> -p
 ```
 
-Enter the password when prompted.
+Enter the database password when asked.
 
 ---
 
-# Step 6: Create Database
+## Create Database
 
 ```sql
 CREATE DATABASE student_db;
@@ -256,19 +63,15 @@ CREATE DATABASE student_db;
 
 ---
 
-# Step 7: Create User and Grant Privileges
+## Create User and Grant Permission
 
 ```sql
-GRANT ALL PRIVILEGES ON student_db.* TO 'username'@'%' IDENTIFIED BY 'your_password';
-
-FLUSH PRIVILEGES;
+GRANT ALL PRIVILEGES ON student_db.* TO 'username'@'localhost' IDENTIFIED BY 'your_password';
 ```
-
-> **Note:** Replace `username` and `your_password` with your own values.
 
 ---
 
-# Step 8: Use Database
+## Use Database
 
 ```sql
 USE student_db;
@@ -276,7 +79,7 @@ USE student_db;
 
 ---
 
-# Step 9: Exit Database
+## Exit Database
 
 ```sql
 exit
@@ -286,7 +89,7 @@ exit
 
 # Backend Setup
 
-## Step 1: Go to Backend Directory
+## Go to Backend Directory
 
 ```bash
 cd EasyCRUD/backend
@@ -294,7 +97,7 @@ cd EasyCRUD/backend
 
 ---
 
-## Step 2: Connect Backend with Database
+## Connect Database with Backend
 
 Open the application properties file.
 
@@ -302,30 +105,25 @@ Open the application properties file.
 nano src/main/resources/application.properties
 ```
 
-Update the database details:
+Enter the Aurora MariaDB endpoint and other database details.
 
-- Aurora RDS Endpoint
-- Database Name
-- Username
-- Password
-
-Save the file.
-
-Backend is now connected with the database.
+Finally, the database is connected to the backend.
 
 ---
 
-## Step 3: Create Dockerfile
+## Create Dockerfile
+
+Create a Dockerfile.
 
 ```bash
 nano Dockerfile
 ```
 
-Write the required Dockerfile.
+> Ensure all Dockerfile steps are correct.
 
 ---
 
-## Step 4: Build Docker Image
+## Build Docker Image
 
 ```bash
 docker build . -t <image-name>
@@ -333,51 +131,39 @@ docker build . -t <image-name>
 
 ---
 
-## Step 5: Run Backend Container
+## Run Backend Container
 
 ```bash
 docker run -d -p <host-port>:<container-port> --name <container-name> <image-name>
 ```
 
-Backend setup completed.
+Backend setup is completed.
 
 ---
 
 # Frontend Setup
 
-## Step 1: Go to Frontend Directory
+## Connect Backend with Frontend
 
-```bash
-cd ../frontend
-```
-
----
-
-## Step 2: Connect Frontend with Backend
-
-Open the environment file.
+Open the `.env` file.
 
 ```bash
 nano .env
 ```
 
-Enter the Backend EC2 Instance Public IP and required backend port.
-
-Save the file.
+Enter the **Backend EC2 Instance Public IP**.
 
 ---
 
-## Step 3: Create Dockerfile
+## Create Dockerfile
 
 ```bash
 nano Dockerfile
 ```
 
-Write the required Dockerfile.
-
 ---
 
-## Step 4: Build Docker Image
+## Build Docker Image
 
 ```bash
 docker build . -t <image-name>
@@ -385,25 +171,24 @@ docker build . -t <image-name>
 
 ---
 
-## Step 5: Run Frontend Container
+## Run Frontend Container
 
 ```bash
 docker run -d -p <host-port>:<container-port> --name <container-name> <image-name>
 ```
 
-Frontend setup completed.
+Frontend setup is completed.
 
 ---
 
-# Verify Deployment
+# Verify
 
-Copy the **Public IP** of the EC2 instance.
+Copy the **EC2 Instance Public IP** and paste it into your browser.
 
-Open a browser and access:
+You will see the **Student Registration Form**.
+
+Example:
 
 ```text
-http://<EC2-Public-IP>:<frontend-port>
+http://<EC2-Public-IP>:<port>
 ```
-
-If everything is configured correctly, the **Student Registration Form** will be displayed.
-````
